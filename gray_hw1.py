@@ -62,26 +62,38 @@ def h(x, y, goal_x, goal_y):
         return h(x - 1, y, goal_x, goal_y) + 1
     return 0
 
+def print_reached(state_space, reached):
+    for y in range(state_space.n):
+        for x in range(state_space.n):
+            if (x,y) in reached:
+                print(f'{reached[(x,y)]:^5}', end='')
+            else:
+                print(f'     ', end='')
+        print('')
+
+# from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
+def uniform_cost(initial_state, goal_state, state_space: StateSpace):
+    node = initial_state
+    frontier = PriorityQueue()
+    frontier.add(0, node)
+    reached = {node: 0}
+    while len(frontier) > 0:
+        print('reached:')
+        print_reached(state_space, reached)
+        node = frontier.pop()
+        if node == goal_state:
+            return node
+        for child in state_space.get_neighbors(node[0], node[1]):
+            child_cost = state_space.get_cost(child[0], child[1]) + reached[node[0], node[1]]
+            if child not in reached or child_cost < reached[child]:
+                reached[child] = child_cost
+                frontier.add(child_cost, child)
+
 def solve(initial_state, goal_state, problem):
     state_space = StateSpace(problem)
     print(state_space)
-    path = []
 
-    agent = initial_state
-    frontier = PriorityQueue()
-    frontier.add(0, [initial_state])
-
-    while len(frontier) > 0:
-        path = frontier.pop()
-        agent = path[len(path) - 1]
-        # goal test
-        if agent == goal_state:
-            return path
-        # expand node
-        for n in state_space.get_neighbors(agent[0], agent[1]):
-            frontier.add( h(n[0], n[1], goal_state[0], goal_state[1]), path + [n] )
-    
-    return 'ERROR'
+    print( uniform_cost(initial_state, goal_state, state_space) )
 
 
-print( solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]]) )
+solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]])
