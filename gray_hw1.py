@@ -7,17 +7,29 @@ class StateSpace():
         self.n = len(problem)
         self.problem = problem
     
+    def get_cost(self, x, y):
+        return self.problem[y][x]
+    
+    def get_neighbors(self, x, y):
+        neighbors = []
+        if x > 0:
+            neighbors.append((x - 1, y))
+        if y > 0:
+            neighbors.append((x, y - 1))
+        if x < self.n - 1:
+            neighbors.append((x + 1, y))
+        if y < self.n - 1:
+            neighbors.append((x, y + 1))
+        return neighbors
+    
     def __getitem__(self, index):
-        x_col = []
-        for y in range(self.n):
-            x_col.append( self.problem[y][index] )
-        return x_col
+        return [self.get_cost(index, y) for y in range(self.n)]
     
     def __str__(self):
         s = ''
         for y in range(self.n):
             for x in range(self.n):
-                s += f'{self[x][y]:^5}'
+                s += f'{self.get_cost(x,y):^5}'
             s += '\n'
         return s[:-1]
 
@@ -49,5 +61,10 @@ def solve(initial_state, goal_state, problem):
             dist = h(x, y, goal_state[0], goal_state[1])
             print(f'{dist:^5}', end='')
         print('')
+    
+    print('Neighbors of Agent (1,0):')
+    neighbors = state_space.get_neighbors(1, 0)
+    for n in neighbors:
+        print(n)
 
 solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]])
