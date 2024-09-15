@@ -81,4 +81,4 @@ def solve(initial_state, goal_state, problem, verborse=False):
     if verborse:
         print(state_space)
 
-    A_star(initial_state, goal_state, state_space)
+    return A_star(initial_state, goal_state, state_space)
