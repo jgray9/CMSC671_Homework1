@@ -55,27 +55,24 @@ def h(tile, goal):
 # adapted from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
 def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_space: StateSpace):
     node = initial_state
+    cost = 0
+    path = ''
     frontier = PriorityQueue()
-    frontier.add(0, node)
-    costs = {node: 0}
-    paths = {node: ''}
+    frontier.add(0, (node, cost, path))
 
     def add_neighbor_to_frontier(neighbor, direction_letter):
         h_n = h(neighbor, goal_state)
-        g_n = costs[node] + state_space.get_cost(neighbor)
+        g_n = cost + state_space.get_cost(neighbor)
         neighbor_cost = h_n + g_n
-        neighbor_path = paths[node] + direction_letter
-        if neighbor not in costs or neighbor_cost < costs[neighbor]:
-            costs[neighbor] = neighbor_cost
-            paths[neighbor] = neighbor_path
-            frontier.add(neighbor_cost, neighbor)
+        neighbor_path = path + direction_letter
+        frontier.add(neighbor_cost, (neighbor, neighbor_cost, neighbor_path))
 
     while len(frontier) > 0:
         # pop best option
-        node = frontier.pop()
+        node, cost, path = frontier.pop()
         # goal test
         if node == goal_state:
-            return paths[node]
+            return path
         # check neighbors
         # left
         if node[0] > 0:
@@ -89,6 +86,7 @@ def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_sp
         # down
         if node[1] < state_space.n - 1:
             add_neighbor_to_frontier( (node[0], node[1] + 1), 'S' )
+    return ''
 
 
 def solve(initial_state, goal_state, problem):
