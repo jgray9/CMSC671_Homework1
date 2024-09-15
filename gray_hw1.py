@@ -15,8 +15,8 @@ class StateSpace():
     
     def __str__(self):
         s = ''
-        for x in range(self.n):
-            for y in range(self.n):
+        for y in range(self.n):
+            for x in range(self.n):
                 s += f'{self[x][y]:^5}'
             s += '\n'
         return s[:-1]
