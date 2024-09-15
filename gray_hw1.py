@@ -21,20 +21,9 @@ class StateSpace():
         self.n = len(problem)
         self.problem = problem
     
-    def get_cost(self, x, y):
+    def get_cost(self, tile):
+        x, y = tile
         return self.problem[y][x]
-    
-    def get_neighbors(self, x, y):
-        neighbors = []
-        if x > 0:
-            neighbors.append((x - 1, y))
-        if y > 0:
-            neighbors.append((x, y - 1))
-        if x < self.n - 1:
-            neighbors.append((x + 1, y))
-        if y < self.n - 1:
-            neighbors.append((x, y + 1))
-        return neighbors
     
     def __getitem__(self, index):
         return [self.get_cost(index, y) for y in range(self.n)]
@@ -43,23 +32,24 @@ class StateSpace():
         s = ''
         for y in range(self.n):
             for x in range(self.n):
-                s += f'{self.get_cost(x,y):^5}'
+                s += f'{self.get_cost((x,y)):^5}'
             s += '\n'
         return s[:-1]
 
-def h(x, y, goal_x, goal_y):
+def h(tile, goal):
+    x, y = tile
     # move up
-    if y > goal_y:
-        return h(x, y - 1, goal_x, goal_y) + 1
+    if y > goal[1]:
+        return h((x, y - 1), goal) + 1
     # move right
-    if x < goal_x:
-        return h(x + 1, y, goal_x, goal_y) + 1
+    if x < goal[0]:
+        return h((x + 1, y), goal) + 1
     # move down
-    if y < goal_y:
-        return h(x, y + 1, goal_x, goal_y) + 1
+    if y < goal[1]:
+        return h((x, y + 1), goal) + 1
     # move left
-    if x > goal_x:
-        return h(x - 1, y, goal_x, goal_y) + 1
+    if x > goal[0]:
+        return h((x - 1, y), goal) + 1
     return 0
 
 # adapted from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
@@ -71,8 +61,8 @@ def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_sp
     paths = {node: ''}
 
     def add_neighbor_to_frontier(neighbor, direction_letter):
-        h_n = h(neighbor[0], neighbor[1], goal_state[0], goal_state[1])
-        g_n = costs[node] + state_space.get_cost(neighbor[0], neighbor[1])
+        h_n = h(neighbor, goal_state)
+        g_n = costs[node] + state_space.get_cost(neighbor)
         neighbor_cost = h_n + g_n
         neighbor_path = paths[node] + direction_letter
         if neighbor not in costs or neighbor_cost < costs[neighbor]:
