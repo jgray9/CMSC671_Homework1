@@ -63,7 +63,7 @@ def h(x, y, goal_x, goal_y):
     return 0
 
 # adapted from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
-def uniform_cost(initial_state, goal_state, state_space: StateSpace):
+def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_space: StateSpace):
     node = initial_state
     frontier = PriorityQueue()
     frontier.add(0, node)
@@ -71,7 +71,9 @@ def uniform_cost(initial_state, goal_state, state_space: StateSpace):
     paths = {node: ''}
 
     def add_neighbor_to_frontier(neighbor, direction_letter):
-        neighbor_cost = costs[node] + state_space.get_cost(neighbor[0], neighbor[1])
+        h_n = h(neighbor[0], neighbor[1], goal_state[0], goal_state[1])
+        g_n = costs[node] + state_space.get_cost(neighbor[0], neighbor[1])
+        neighbor_cost = h_n + g_n
         neighbor_path = paths[node] + direction_letter
         if neighbor not in costs or neighbor_cost < costs[neighbor]:
             costs[neighbor] = neighbor_cost
@@ -103,7 +105,12 @@ def solve(initial_state, goal_state, problem):
     state_space = StateSpace(problem)
     print(state_space)
 
-    print( uniform_cost(initial_state, goal_state, state_space) )
+    print( A_star(initial_state, goal_state, state_space) )
 
 
-solve((2,2), (0,0), [[m,m,m,s],[m,m,m,s],[m,m,m,s],[p,p,p,p]])
+solve((1,0), (3,3), [
+    [m,p,m,m,m],
+    [p,p,p,p,p],
+    [p,m,m,m,m],
+    [p,p,p,p,p]
+    ])
