@@ -62,37 +62,28 @@ def h(x, y, goal_x, goal_y):
         return h(x - 1, y, goal_x, goal_y) + 1
     return 0
 
-def print_reached(state_space, reached):
-    for y in range(state_space.n):
-        for x in range(state_space.n):
-            if (x,y) in reached:
-                print(f'{reached[(x,y)]:^5}', end='')
-            else:
-                print(f'     ', end='')
-        print('')
-
 # adapted from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
 def uniform_cost(initial_state, goal_state, state_space: StateSpace):
     node = initial_state
     frontier = PriorityQueue()
-    frontier.add(0, (node,[]))
-    reached = {node: 0}
+    frontier.add(0, node)
+    costs = {node: 0}
+    paths = {node: ''}
 
     def add_neighbor_to_frontier(neighbor, direction_letter):
-        neighbor_cost = reached[node] + state_space.get_cost(neighbor[0], neighbor[1])
-        neighbor_path = path + [direction_letter]
-        if neighbor not in reached or neighbor_cost < reached[neighbor]:
-            reached[neighbor] = neighbor_cost
-            frontier.add(neighbor_cost, (neighbor,neighbor_path))
+        neighbor_cost = costs[node] + state_space.get_cost(neighbor[0], neighbor[1])
+        neighbor_path = paths[node] + direction_letter
+        if neighbor not in costs or neighbor_cost < costs[neighbor]:
+            costs[neighbor] = neighbor_cost
+            paths[neighbor] = neighbor_path
+            frontier.add(neighbor_cost, neighbor)
 
     while len(frontier) > 0:
-        print('reached:')
-        print_reached(state_space, reached)
         # pop best option
-        node, path = frontier.pop()
+        node = frontier.pop()
         # goal test
         if node == goal_state:
-            return path
+            return paths[node]
         # check neighbors
         # left
         if node[0] > 0:
@@ -108,7 +99,6 @@ def uniform_cost(initial_state, goal_state, state_space: StateSpace):
             add_neighbor_to_frontier( (node[0], node[1] + 1), 'S' )
 
 
-
 def solve(initial_state, goal_state, problem):
     state_space = StateSpace(problem)
     print(state_space)
@@ -116,4 +106,4 @@ def solve(initial_state, goal_state, problem):
     print( uniform_cost(initial_state, goal_state, state_space) )
 
 
-solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]])
+solve((2,2), (0,0), [[m,m,m,s],[m,m,m,s],[m,m,m,s],[p,p,p,p]])
