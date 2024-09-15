@@ -37,20 +37,7 @@ class StateSpace():
         return s[:-1]
 
 def h(tile, goal):
-    x, y = tile
-    # move up
-    if y > goal[1]:
-        return h((x, y - 1), goal) + 1
-    # move right
-    if x < goal[0]:
-        return h((x + 1, y), goal) + 1
-    # move down
-    if y < goal[1]:
-        return h((x, y + 1), goal) + 1
-    # move left
-    if x > goal[0]:
-        return h((x - 1, y), goal) + 1
-    return 0
+    return abs(goal[0] - tile[0]) + abs(goal[1] - tile[1])
 
 # adapted from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
 def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_space: StateSpace):
@@ -96,9 +83,9 @@ def solve(initial_state, goal_state, problem):
     print( A_star(initial_state, goal_state, state_space) )
 
 
-solve((1,0), (3,3), [
-    [m,p,m,m,m],
-    [p,p,p,p,p],
-    [p,m,m,m,m],
-    [p,p,p,p,p]
+solve((2,2), (0,0), [
+    [m,m,m,s],
+    [m,m,m,s],
+    [m,m,m,s],
+    [p,p,p,p]
     ])
