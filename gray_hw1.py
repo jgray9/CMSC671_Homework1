@@ -2,6 +2,17 @@ p = 10
 s = 50
 m = 200
 
+class PriorityQueue():
+    def __init__(self):
+        self.items = []
+    
+    def add(self, key, value):
+        self.items.append((key, value))
+        self.items.sort(reverse=True)
+    
+    def pop(self):
+        return self.items.pop()[1]
+
 class StateSpace():
     def __init__(self, problem) -> None:
         self.n = len(problem)
@@ -68,3 +79,15 @@ def solve(initial_state, goal_state, problem):
         print(n)
 
 solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]])
+
+q = PriorityQueue()
+q.add(1, 'tac')
+print(q.items)
+q.add(0, 'tic')
+print(q.items)
+q.add(2, 'toe')
+print(q.items)
+
+print(q.pop())
+print(q.pop())
+print(q.pop())
