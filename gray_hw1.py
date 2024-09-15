@@ -12,6 +12,9 @@ class PriorityQueue():
     
     def pop(self):
         return self.items.pop()[1]
+    
+    def __len__(self):
+        return len(self.items)
 
 class StateSpace():
     def __init__(self, problem) -> None:
@@ -61,33 +64,24 @@ def h(x, y, goal_x, goal_y):
 
 def solve(initial_state, goal_state, problem):
     state_space = StateSpace(problem)
+    print(state_space)
+    path = []
 
-    print(f'Agent: {initial_state}')
-    print(f'Goal State: {goal_state}')
-    print(f'State Space:\n{state_space}')
+    agent = initial_state
+    frontier = PriorityQueue()
+    frontier.add(0, [initial_state])
 
-    print('Heuristics:')
-    for x in range(state_space.n):
-        for y in range(state_space.n):
-            dist = h(x, y, goal_state[0], goal_state[1])
-            print(f'{dist:^5}', end='')
-        print('')
+    while len(frontier) > 0:
+        path = frontier.pop()
+        agent = path[len(path) - 1]
+        # goal test
+        if agent == goal_state:
+            return path
+        # expand node
+        for n in state_space.get_neighbors(agent[0], agent[1]):
+            frontier.add( h(n[0], n[1], goal_state[0], goal_state[1]), path + [n] )
     
-    print('Neighbors of Agent (1,0):')
-    neighbors = state_space.get_neighbors(1, 0)
-    for n in neighbors:
-        print(n)
+    return 'ERROR'
 
-solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]])
 
-q = PriorityQueue()
-q.add(1, 'tac')
-print(q.items)
-q.add(0, 'tic')
-print(q.items)
-q.add(2, 'toe')
-print(q.items)
-
-print(q.pop())
-print(q.pop())
-print(q.pop())
+print( solve((1,0), (1,2), [[p,p,p], [p,m,p], [s,s,s]]) )
