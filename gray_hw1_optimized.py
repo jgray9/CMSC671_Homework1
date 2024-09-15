@@ -77,16 +77,9 @@ def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_sp
     return ''
 
 
-def solve(initial_state, goal_state, problem):
+def solve(initial_state, goal_state, problem, verborse=False):
     state_space = StateSpace(problem)
-    print(state_space)
+    if verborse:
+        print(state_space)
 
-    print( A_star(initial_state, goal_state, state_space) )
-
-
-solve((2,2), (0,0), [
-    [m,m,m,s],
-    [m,m,m,s],
-    [m,m,m,s],
-    [m,p,p,p]
-    ])
+    return A_star(initial_state, goal_state, state_space)
