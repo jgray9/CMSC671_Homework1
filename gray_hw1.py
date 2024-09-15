@@ -65,7 +65,7 @@ def A_star(initial_state: tuple[int, int], goal_state: tuple[int, int], state_sp
         g_n = cost + state_space.get_cost(neighbor)
         neighbor_cost = h_n + g_n
         neighbor_path = path + direction_letter
-        frontier.add(neighbor_cost, (neighbor, neighbor_cost, neighbor_path))
+        frontier.add(neighbor_cost, (neighbor, g_n, neighbor_path))
 
     while len(frontier) > 0:
         # pop best option
