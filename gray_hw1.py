@@ -71,23 +71,43 @@ def print_reached(state_space, reached):
                 print(f'     ', end='')
         print('')
 
-# from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
+# adapted from Artificial Intelligence: A Modern Approach 4th Edition pg. 73
 def uniform_cost(initial_state, goal_state, state_space: StateSpace):
     node = initial_state
     frontier = PriorityQueue()
-    frontier.add(0, node)
+    frontier.add(0, (node,[]))
     reached = {node: 0}
+
+    def add_neighbor_to_frontier(neighbor, direction_letter):
+        neighbor_cost = reached[node] + state_space.get_cost(neighbor[0], neighbor[1])
+        neighbor_path = path + [direction_letter]
+        if neighbor not in reached or neighbor_cost < reached[neighbor]:
+            reached[neighbor] = neighbor_cost
+            frontier.add(neighbor_cost, (neighbor,neighbor_path))
+
     while len(frontier) > 0:
         print('reached:')
         print_reached(state_space, reached)
-        node = frontier.pop()
+        # pop best option
+        node, path = frontier.pop()
+        # goal test
         if node == goal_state:
-            return node
-        for child in state_space.get_neighbors(node[0], node[1]):
-            child_cost = state_space.get_cost(child[0], child[1]) + reached[node[0], node[1]]
-            if child not in reached or child_cost < reached[child]:
-                reached[child] = child_cost
-                frontier.add(child_cost, child)
+            return path
+        # check neighbors
+        # left
+        if node[0] > 0:
+            add_neighbor_to_frontier( (node[0] - 1, node[1]), 'W' )
+        # up
+        if node[1] > 0:
+            add_neighbor_to_frontier( (node[0], node[1] - 1), 'N' )
+        # right
+        if node[0] < state_space.n - 1:
+            add_neighbor_to_frontier( (node[0] + 1, node[1]), 'E' )
+        # down
+        if node[1] < state_space.n - 1:
+            add_neighbor_to_frontier( (node[0], node[1] + 1), 'S' )
+
+
 
 def solve(initial_state, goal_state, problem):
     state_space = StateSpace(problem)
